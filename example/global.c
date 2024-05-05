@@ -48,10 +48,6 @@ wasm_func_t* get_export_func(const wasm_extern_vec_t* exports, size_t i) {
 
 
 int main(int argc, const char* argv[]) {
-  // Initialize.
-  printf("Initializing...\n");
-  wasm_engine_t* engine = wasm_engine_new();
-  wasm_store_t* store = wasm_store_new(engine);
 
   // Load binary.
   printf("Loading binary...\n");
@@ -71,11 +67,18 @@ int main(int argc, const char* argv[]) {
   }
   fclose(file);
 
+  // Initialize.
+  printf("Initializing...\n");
+  wasm_engine_t* engine = wasm_engine_new();
+  wasm_store_t* store = wasm_store_new(engine);
+
   // Compile.
   printf("Compiling module...\n");
   own wasm_module_t* module = wasm_module_new(store, &binary);
   if (!module) {
     printf("> Error compiling module!\n");
+    wasm_store_delete(store);
+    wasm_engine_delete(engine);
     return 1;
   }
 
